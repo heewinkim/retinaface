@@ -6,10 +6,21 @@ import os
 
 class RetinaFace(object):
 
-    def __init__(self):
-        print("model init ..")
+    def __init__(self,quality='normal'):
+        """
+        :param resize: one of [ 'high','normal','speed' ]
+        """
+
+        if quality == 'normal':
+            self._resizeFunc = lambda v: PyImageUtil.resize_image(v[0], **{v[1]: 800})
+        elif quality =='speed':
+            self._resizeFunc = lambda v: PyImageUtil.resize_image(v[0], **{v[1]: 320})
+        else:
+            self._resizeFunc = lambda v: v[0]
+
+        print("model[{} quality] init ..".format(quality))
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        with tf.io.gfile.GFile(current_dir+'/.data/frozen_graph.pb', "rb") as f:
+        with tf.io.gfile.GFile(current_dir+'/frozen_graph.pb', "rb") as f:
             graph_def = tf.compat.v1.GraphDef()
             graph_def.ParseFromString(f.read())
 
@@ -23,7 +34,7 @@ class RetinaFace(object):
             tf.nest.map_structure(import_graph.as_graph_element, ['x:0']),
             tf.nest.map_structure(import_graph.as_graph_element, ['Identity:0'])
         )
-        self.predict(tf.convert_to_tensor(np.zeros((320,320,3),dtype=np.float32)))
+        self.predict(np.zeros((320,320,3),dtype=np.float32))
         print("model success !")
 
     def read(self,image_path):
@@ -45,9 +56,16 @@ class RetinaFace(object):
         :param threshold: threshold of confidence
         :return: faces(list), eache face(dict) has a key = [ x1, y1, x2, y2,left_eye,right_eye,nose,left_lip,right_lip ]
         """
-        # preprocessing (padding)
         img_h, img_w = rgb_image.shape[:2]
 
+        if img_h>img_w:
+            rgb_image = self._resizeFunc([rgb_image,'height'])
+        else:
+            rgb_image = self._resizeFunc([rgb_image, 'width'])
+
+        img_h, img_w = rgb_image.shape[:2]
+
+        # preprocessing (padding)
         max_steps = 32
         img_h_pad = max_steps - img_h % max_steps if img_h and img_h % max_steps != 0 else 0
         img_w_pad = max_steps - img_w % max_steps if img_w and img_w % max_steps != 0 else 0
@@ -106,17 +124,12 @@ class RetinaFace(object):
 if __name__ == '__main__':
 
     import cv2
-    detector = RetinaFace()
+    detector = RetinaFace('normal')
 
     for path in PyDataUtil.get_pathlist('/Users/hian/Desktop/Data/image_data/snaps_image/thum'):
 
         rgb_image = detector.read(path)
         h,w = rgb_image.shape[:2]
-        re=800
-        if w>h:
-            rgb_image = PyImageUtil.resize_image(rgb_image,width=re)
-        else:
-            rgb_image = PyImageUtil.resize_image(rgb_image, height=re)
         PyDebugUtil.tic()
         faces = detector.predict(rgb_image)
         time = PyDebugUtil.toc()

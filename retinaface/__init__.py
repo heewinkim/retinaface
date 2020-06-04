@@ -1,1 +1,1 @@
-from .src import RetinaFace
+from retinaface.src.retinaface import RetinaFace
