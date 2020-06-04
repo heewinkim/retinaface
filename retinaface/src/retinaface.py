@@ -56,9 +56,9 @@ class RetinaFace(object):
         :param threshold: threshold of confidence
         :return: faces(list), eache face(dict) has a key = [ x1, y1, x2, y2,left_eye,right_eye,nose,left_lip,right_lip ]
         """
-        img_h, img_w = rgb_image.shape[:2]
+        img_h_, img_w_ = rgb_image.shape[:2]
 
-        if img_h>img_w:
+        if img_h_>img_w_:
             rgb_image = self._resizeFunc([rgb_image,'height'])
         else:
             rgb_image = self._resizeFunc([rgb_image, 'width'])
@@ -87,8 +87,10 @@ class RetinaFace(object):
 
         faces=[]
         for bbox in outputs:
-            x1, y1, x2, y2 = list(map(int, bbox[:4]))
-            left_eye,right_eye,nose,left_lip,right_lip = list(map(tuple,np.reshape(bbox, [-1, 2]).astype(np.int)[2:-1]))
+            w_ex = img_w_ / img_w
+            h_ex = img_h_ / img_h
+            x1, y1, x2, y2 = list(map(int, np.multiply(bbox[:4],[w_ex,h_ex,w_ex,h_ex])))
+            left_eye,right_eye,nose,left_lip,right_lip = list(map(tuple,np.multiply(np.reshape(bbox, [-1, 2]),[w_ex,h_ex]).astype(np.int)[2:-1]))
             faces.append({
                 'x1':x1,'y1':y1,'x2':x2,'y2':y2,
                 'left_eye':left_eye,'right_eye':right_eye,'nose':nose,'left_lip':left_lip,'right_lip':right_lip
