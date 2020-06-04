@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 packages = list(open('requirements.txt').readlines())
 setup(
     name='retinaface',
-    version='0.0.2',
+    version='0.0.3',
     author='HEESEUNG KIM',
     author_email='heewin.kim@gmail.com',
     description='face detector',
