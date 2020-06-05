@@ -8,7 +8,7 @@ class RetinaFace(object):
 
     def __init__(self,quality='normal'):
         """
-        :param resize: one of [ 'high','normal','speed' ]
+        :param quality: one of [ 'high','normal','speed' ]
         """
 
         if quality == 'normal':
@@ -47,6 +47,40 @@ class RetinaFace(object):
         img_cv = PyImageUtil.cv2.imread(image_path)
         rgb_image = PyImageUtil.cv2.cvtColor(img_cv,PyImageUtil.cv2.COLOR_BGR2RGB).astype(np.float32)
         return rgb_image
+
+    def _predict(self,rgb_image,threshold=0.95):
+        """
+        detect face in rgb image
+
+        :param rgb_image: rgb image, ! width, height have to multiplier of 32 !, float32
+        :param threshold: threshold of confidence
+        :return: faces(list), eache face(dict) has a key = [ x1, y1, x2, y2,left_eye,right_eye,nose,left_lip,right_lip ]
+        """
+        img_h, img_w = rgb_image.shape[:2]
+
+        # preprocessing (padding)
+        x = tf.cast(rgb_image, dtype=tf.float32)
+
+        # prediction
+        outputs = tf.squeeze(self._model(x[tf.newaxis, ...]), axis=0)
+
+        # postprocessing (remove-padding,ratio to pixcel, threshold)
+        outputs = tf.concat([
+            tf.reshape(tf.multiply(tf.reshape(tf.slice(outputs, [0, 0], [-1, 14]), [-1, 7, 2]),[img_w, img_h]),[-1, 14]),
+            tf.slice(outputs, [0, 14], [-1, 2])
+        ], axis=1)
+        outputs = tf.gather_nd(outputs, tf.where(tf.squeeze(tf.slice(outputs, [0, 15], [-1, 1]), axis=-1) >= threshold))
+
+        faces = []
+        for bbox in outputs:
+            x1, y1, x2, y2 = list(map(int, bbox[:4]))
+            left_eye, right_eye, nose, left_lip, right_lip = list(map(tuple, np.reshape(bbox, [-1, 2]).astype(np.int)[2:-1]))
+            faces.append({
+                'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2,
+                'left_eye': left_eye, 'right_eye': right_eye, 'nose': nose, 'left_lip': left_lip, 'right_lip': right_lip
+            })
+
+        return faces
 
     def predict(self,rgb_image,threshold=0.95):
         """
@@ -131,8 +165,7 @@ if __name__ == '__main__':
     for path in PyDataUtil.get_pathlist('/Users/hian/Desktop/Data/image_data/snaps_image/thum'):
 
         rgb_image = detector.read(path)
-        h,w = rgb_image.shape[:2]
+        rgb_image = cv2.resize(rgb_image,(640,640))
         PyDebugUtil.tic()
-        faces = detector.predict(rgb_image)
+        faces = detector._predict(rgb_image)
         time = PyDebugUtil.toc()
-        draw_image = detector.draw(rgb_image, faces)
