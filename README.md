@@ -1,17 +1,23 @@
 # [RetinaFace](https://github.com/heewinkim/retinaface)
  
- tensorflow 2 - PyPI implement
+ face detector with landmarks, RetinaFace PyPI implement
  
  reference : https://github.com/peteryuX/retinaface-tf2 
+ 
+![](https://img.shields.io/badge/python-3.6.1-blue)
+![](https://img.shields.io/badge/tensorflow-2.0.0-orange)
 
 ----
 
 ### INSTALL
+```python
     $pip3 install refinaface
+```
 
 ### USEAGE
 
-    #pip3 install opencv-python
+```python
+
     import cv2 
 
     from retinaface import Retinaface()
@@ -34,5 +40,6 @@
     # show using cv2
     # cv2.imshow("result",result_img)
     # cv2.waitKey()
+```
 
     
