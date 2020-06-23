@@ -20,9 +20,9 @@ pip3 install refinaface
 
 import cv2 
 
-from retinaface import Retinaface()
+from retinaface import RetinaFace
 
-detector = Retinaface(quality="normal")
+detector = RetinaFace(quality="normal")
 
 # same with cv2.imread,cv2.cvtColor 
 rgb_image = detector.read("path/to/image")
