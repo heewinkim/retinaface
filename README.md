@@ -18,14 +18,15 @@ pip3 install refinaface
 
 ```python
 
+#pip3 install opencv-python
 import cv2 
-
 from retinaface import RetinaFace
 
+# init with normal accuracy option
 detector = RetinaFace(quality="normal")
 
 # same with cv2.imread,cv2.cvtColor 
-rgb_image = detector.read("path/to/image")
+rgb_image = detector.read("data/hian.jpg")
 
 faces = detector.predict(rgb_image)
 # faces is list of face dictionary
@@ -33,11 +34,14 @@ faces = detector.predict(rgb_image)
 # faces=[{"x1":20,"y1":32, ... }, ...]
 
 result_img = detector.draw(rgb_image,faces)
-    
-# save
-# cv2.imwrite("result_img.jpg",result_img)
+
+# save ([...,::-1] : rgb -> bgr )
+cv2.imwrite("data/result_img.jpg",result_img[...,::-1])
 
 # show using cv2
-# cv2.imshow("result",result_img)
+# cv2.imshow("result",result_img[...,::-1)
 # cv2.waitKey()
 ```
+
+### result with drawing
+![](./data/result_img.jpg)
