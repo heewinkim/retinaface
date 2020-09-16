@@ -12,10 +12,10 @@ setup(
     author_email='heewin.kim@gmail.com',
     description='face detector',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     license='MIT',
     url='https://github.com/heewinkim/retinaface',
     download_url='https://github.com/heewinkim/retinaface/archive/master.zip',
-
     packages=find_packages(),
     install_requires=open('requirements.txt').readlines(),
     package_data={'':['*']},

@@ -15,5 +15,5 @@ faces = detector.predict(rgb_image)
 
 result_img = detector.draw(rgb_image, faces)
 
-# save
+# save ([...,::-1] : rgb -> bgr )
 cv2.imwrite("data/result_img.jpg",result_img[...,::-1])
