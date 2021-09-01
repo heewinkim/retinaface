@@ -39,7 +39,7 @@ result_img = detector.draw(rgb_image,faces)
 cv2.imwrite("data/result_img.jpg",result_img[...,::-1])
 
 # show using cv2
-# cv2.imshow("result",result_img[...,::-1)
+# cv2.imshow("result",result_img[...,::-1])
 # cv2.waitKey()
 ```
 
