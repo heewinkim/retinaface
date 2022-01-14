@@ -46,7 +46,3 @@ cv2.imwrite("data/result_img.jpg",result_img[...,::-1])
 ### result with drawing
 ![](./data/result_img.jpg)
 
-
-
-### result of AP score on WIDERFACE dataset
-![](./widerface_validation.png)
