@@ -11,7 +11,7 @@
 
 ### INSTALL
 ```sh
-pip3 install refinaface
+pip3 install retinaface
 ```
 
 ### USEAGE
