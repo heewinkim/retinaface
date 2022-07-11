@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from utilpack.util import *
+import cv2
 import os
 
 
@@ -12,9 +12,9 @@ class RetinaFace(object):
         """
 
         if quality == 'normal':
-            self._resizeFunc = lambda v: PyImageUtil.resize_image(v[0], **{v[1]: 800})
+            self._resizeFunc = lambda v: self._resize_image(v[0], **{v[1]: 800})
         elif quality =='speed':
-            self._resizeFunc = lambda v: PyImageUtil.resize_image(v[0], **{v[1]: 320})
+            self._resizeFunc = lambda v: self._resize_image(v[0], **{v[1]: 320})
         else:
             self._resizeFunc = lambda v: v[0]
 
@@ -30,12 +30,50 @@ class RetinaFace(object):
         wrapped_import = tf.compat.v1.wrap_function(_imports_graph_def, [])
         import_graph = wrapped_import.graph
 
-        self._model =  wrapped_import.prune(
+        self._model = wrapped_import.prune(
             tf.nest.map_structure(import_graph.as_graph_element, ['x:0']),
             tf.nest.map_structure(import_graph.as_graph_element, ['Identity:0'])
         )
         self.predict(np.zeros((320,320,3),dtype=np.float32))
         print("model success !")
+
+    def _resize_image(self,img_cv, width=0, height=0):
+        """
+        resizing image with keeping ratio, you can offer width, height in pixel or percent
+
+        :param width: pixel size or ratio
+        :param hegith: pixel size or ratio
+        :param img_cv: cv image
+        :return: cv image
+        """
+
+        h, w, _ = img_cv.shape
+
+        if width == 0 and height == 0:
+            return cv2.resize(img_cv, None, fx=0.5, fy=0.5)
+
+        if (width < 1 and width != 0) or (height < 1 and height != 0):
+
+            if height == 0:
+                re_h = width
+                re_w = width
+                return cv2.resize(img_cv, None, fx=re_w, fy=re_h)
+
+            elif width == 0:
+                re_w = height
+                re_h = height
+                return cv2.resize(img_cv, None, fx=re_w, fy=re_h)
+
+        else:
+
+            if height == 0:
+                re_h = int(width / w * h)
+                re_w = width
+                return cv2.resize(img_cv, (re_w, re_h))
+            elif width == 0:
+                re_w = int(height / h * w)
+                re_h = height
+                return cv2.resize(img_cv, (re_w, re_h))
 
     def read(self,image_path):
         """
@@ -44,8 +82,8 @@ class RetinaFace(object):
         :param image_path:
         :return: rgb image, float32
         """
-        img_cv = PyImageUtil.cv2.imread(image_path)
-        rgb_image = PyImageUtil.cv2.cvtColor(img_cv,PyImageUtil.cv2.COLOR_BGR2RGB).astype(np.float32)
+        img_cv = cv2.imread(image_path)
+        rgb_image = cv2.cvtColor(img_cv,cv2.COLOR_BGR2RGB).astype(np.float32)
         return rgb_image
 
     def _predict(self,rgb_image,threshold=0.95):
@@ -148,24 +186,10 @@ class RetinaFace(object):
             colors = [(255, 0, 255),(255, 0, 0),(0, 255, 0),(0, 0, 255),(0, 0, 0),(255, 0, 255)]
 
         for face in faces:
-            PyImageUtil.cv2.rectangle(darwing_img, (face['x1'], face['y1']), (face['x2'], face['y2']), colors[0], thickness)
-            PyImageUtil.cv2.circle(darwing_img, face['left_eye'], 1, colors[1], thickness)
-            PyImageUtil.cv2.circle(darwing_img, face['right_eye'], 1, colors[2], thickness)
-            PyImageUtil.cv2.circle(darwing_img, face['nose'], 1, colors[3], thickness)
-            PyImageUtil.cv2.circle(darwing_img, face['left_lip'], 1, colors[4], thickness)
-            PyImageUtil.cv2.circle(darwing_img, face['right_lip'], 1, colors[5], thickness)
+            cv2.rectangle(darwing_img, (face['x1'], face['y1']), (face['x2'], face['y2']), colors[0], thickness)
+            cv2.circle(darwing_img, face['left_eye'], 1, colors[1], thickness)
+            cv2.circle(darwing_img, face['right_eye'], 1, colors[2], thickness)
+            cv2.circle(darwing_img, face['nose'], 1, colors[3], thickness)
+            cv2.circle(darwing_img, face['left_lip'], 1, colors[4], thickness)
+            cv2.circle(darwing_img, face['right_lip'], 1, colors[5], thickness)
         return darwing_img
-
-
-if __name__ == '__main__':
-
-    import cv2
-    detector = RetinaFace('normal')
-
-    for path in PyDataUtil.get_pathlist('/Users/hian/Desktop/Data/image_data/snaps_image/thum'):
-
-        rgb_image = detector.read(path)
-        rgb_image = cv2.resize(rgb_image,(640,640))
-        PyDebugUtil.tic()
-        faces = detector._predict(rgb_image)
-        time = PyDebugUtil.toc()

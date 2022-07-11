@@ -4,4 +4,4 @@ pip install twine
 twine upload dist/*
 rm -rf build
 rm -rf dist
-rm -rf utilpack.egg-info
+rm -rf retinaface.egg-info
