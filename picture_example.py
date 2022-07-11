@@ -2,7 +2,9 @@
 import cv2
 from retinaface import RetinaFace
 
-# init with normal accuracy option
+# init with 'normal' accuracy option (resize width or height to 800 )
+# or you can choice 'speed' (resize to 320)
+# or you can initiate with no parameter for running with original image size
 detector = RetinaFace(quality="normal")
 
 # same with cv2.imread,cv2.cvtColor
