@@ -7,9 +7,11 @@
 ![](https://img.shields.io/badge/python-3.7-blue)
 ![](https://img.shields.io/badge/tensorflow-2.5.0-orange)
 
-[![Run on Streamlit](https://img.shields.io/badge/Run-STREAMLIT-green)](https://heewinkim-retinaface-streamlit-app-3nx0av.streamlitapp.com/)
-
+## 커피 한잔만 사주세요 (Please give me a coffee) 🐥
 <a href="https://www.buymeacoffee.com/heewinkim" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## 바로 실행해 보기 (Direct Execute using Streamlit) 🐹
+[![Run on Streamlit](https://img.shields.io/badge/Run-STREAMLIT-green)](https://heewinkim-retinaface-streamlit-app-3nx0av.streamlitapp.com/)
 
 ----
 
