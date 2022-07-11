@@ -5,7 +5,9 @@
  reference : https://github.com/peteryuX/retinaface-tf2 
  
 ![](https://img.shields.io/badge/python-3.7-blue)
-![](https://img.shields.io/badge/tensorflow-2.5-orange)
+![](https://img.shields.io/badge/tensorflow-2.5.0-orange)
+
+[![Run on Streamlit](https://img.shields.io/badge/Run-STREAMLIT-green)](https://heewinkim-retinaface-streamlit-app-3nx0av.streamlitapp.com/)
 
 <a href="https://www.buymeacoffee.com/heewinkim" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
@@ -24,9 +26,7 @@ pip3 install refinaface
 import cv2 
 from retinaface import RetinaFace
 
-# init with 'normal' accuracy option (resize width or height to 800 )
-# or you can choice 'speed' (resize to 320)
-# or you can initiate with no parameter for running with original image size
+# init with normal accuracy option
 detector = RetinaFace(quality="normal")
 
 # same with cv2.imread,cv2.cvtColor 
