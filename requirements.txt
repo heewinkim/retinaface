@@ -1,4 +1,4 @@
-tensorflow==2.5.0
+tensorflow==2.11.1
 streamlit==1.10.0
 opencv-python-headless==4.6.0.66
 streamlit-webrtc==0.42.0
